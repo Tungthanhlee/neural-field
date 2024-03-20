@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python3 -m scripts.train_field field=mlp dataset=image
