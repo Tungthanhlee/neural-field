@@ -27,11 +27,13 @@ class FieldMLP(Field):
 
         super().__init__(cfg, d_coordinate, d_out)
         # raise NotImplementedError("This is your homework.")
+        if cfg.positional_encoding_octaves is not None:
+            d_coordinate = PositionalEncoding(cfg.positional_encoding_octaves).d_out(d_coordinate)
             
         #mlp
         layers = [nn.Linear(d_coordinate, cfg.d_hidden), nn.ReLU()] if \
             cfg.positional_encoding_octaves is None else \
-                [nn.Linear(PositionalEncoding(cfg.positional_encoding_octaves).d_out(d_coordinate), cfg.d_hidden), nn.ReLU()]
+                [PositionalEncoding(cfg.positional_encoding_octaves), nn.Linear(d_coordinate, cfg.d_hidden), nn.ReLU()]
         for _ in range(cfg.num_hidden_layers - 1):
             layers.append(nn.Linear(cfg.d_hidden, cfg.d_hidden))
             layers.append(nn.ReLU())
