@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 python3 -m scripts.compare_fields
+# CUDA_VISIBLE_DEVICES=0 python3 -m scripts.compare_fields
 
 # CUDA_VISIBLE_DEVICES=0 python3 -m scripts.train_field field=ground_plan \
 #                                     dataset=implicit \

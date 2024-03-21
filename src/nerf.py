@@ -1,6 +1,7 @@
 from jaxtyping import Float
 from omegaconf import DictConfig
 from torch import Tensor, nn
+import torch
 
 from .field.field import Field
 
@@ -32,7 +33,30 @@ class NeRF(nn.Module):
         4. Composite these alpha values together with the evaluated colors from.
         """
 
-        raise NotImplementedError("This is your homework.")
+        # generate samples
+        xyz_sample_locations, sample_boundaries = self.generate_samples(
+            origins, directions, near, far, self.cfg.num_samples
+        )
+        
+        # evaluate neural field
+        out_field = self.field(xyz_sample_locations) # [batch, sample, 4]
+        
+        # map to valid output ranges
+        out_field[..., :3] = torch.sigmoid(out_field[..., :3]) # [batch, sample, 3]
+        
+        # compute alpha values
+        alphas = self.compute_alpha_values(
+            out_field[..., -1],
+            sample_boundaries,
+        )
+        
+        # composite these alpha values together with the evaluated colors
+        c = self.alpha_composite(
+            alphas,
+            out_field[..., :3],
+        )
+        
+        return c
 
     def generate_samples(
         self,
@@ -51,7 +75,14 @@ class NeRF(nn.Module):
         at the midpoints of the segments.
         """
 
-        raise NotImplementedError("This is your homework.")
+        #compute steps between near and far
+        sample_boundaries = torch.linspace(near, far, num_samples+1, device=origins.device) # [sample+1]
+        
+        #map steps to sample locations
+        mid_points_sample = (sample_boundaries[:-1] + sample_boundaries[1:]) / 2 # [sample]
+        xyz_sample_locations = origins[:, None] + directions[:, None] * mid_points_sample[..., None] # [batch, sample, 3]
+        
+        return xyz_sample_locations, sample_boundaries
 
     def compute_alpha_values(
         self,
@@ -62,7 +93,9 @@ class NeRF(nn.Module):
         boundaries.
         """
 
-        raise NotImplementedError("This is your homework.")
+        segment_length = boundaries[..., 1:] - boundaries[..., :-1] # [batch, sample]
+        alpha = 1 - torch.exp(-sigma * segment_length) # [batch, sample]
+        return alpha
 
     def alpha_composite(
         self,
@@ -73,4 +106,13 @@ class NeRF(nn.Module):
         background is black.
         """
 
-        raise NotImplementedError("This is your homework.")
+        #compute transmittance
+        T = torch.cumprod(1 - alphas, dim=-1) # [batch, sample]
+        
+        #compute weight
+        w = alphas * T # [batch, sample]
+        
+        #compute expected radiance along the ray: c = sum_i=1^n w_i * colors_i
+        c = torch.sum(w[..., None] * colors, dim=1) # [batch, 3] sum over samples
+        
+        return c
