@@ -12,10 +12,10 @@ from src.visualization.layout import add_border, hcat
 commands = {
     "MLP (w/o Encoding)": "field=mlp dataset=image remap_outputs=true field.positional_encoding_octaves=null field.num_hidden_layers=2 field.d_hidden=128",
     "MLP (w/ Encoding)": "field=mlp dataset=image remap_outputs=true field.positional_encoding_octaves=6 field.num_hidden_layers=2 field.d_hidden=128",
-    "Grid (32x32)": "field=grid dataset=image remap_outputs=true field.side_length=33",
-    "Hybrid Grid (32x32)": "field=hybrid_grid dataset=image remap_outputs=true field.d_grid_feature=128 field.grid.side_length=33 field.mlp.positional_encoding_octaves=null field.mlp.num_hidden_layers=2 field.mlp.d_hidden=64",
-    "SIREN": "field=siren dataset=image remap_outputs=false learning_rate=1e-4",
-    "Ground Plan": "field=ground_plan dataset=implicit dataset.function=torus field.d_grid_feature=128 field.positional_encoding_octaves=8 field.grid.side_length=65 field.mlp.positional_encoding_octaves=null field.mlp.num_hidden_layers=2 field.mlp.d_hidden=64",
+    # "Grid (32x32)": "field=grid dataset=image remap_outputs=true field.side_length=33",
+    # "Hybrid Grid (32x32)": "field=hybrid_grid dataset=image remap_outputs=true field.d_grid_feature=128 field.grid.side_length=33 field.mlp.positional_encoding_octaves=null field.mlp.num_hidden_layers=2 field.mlp.d_hidden=64",
+    # "SIREN": "field=siren dataset=image remap_outputs=false learning_rate=1e-4",
+    # "Ground Plan": "field=ground_plan dataset=implicit dataset.function=torus field.d_grid_feature=128 field.positional_encoding_octaves=8 field.grid.side_length=65 field.mlp.positional_encoding_octaves=null field.mlp.num_hidden_layers=2 field.mlp.d_hidden=64",
 }
 
 NUM_STEPS = 2000

@@ -1,4 +1,4 @@
-# 6.S980 Homework 2 - Solution - Made by Tung Le
+# Neural Fields
 
 ## Getting Started
 

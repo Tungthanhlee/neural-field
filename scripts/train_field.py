@@ -1,3 +1,4 @@
+
 from pathlib import Path
 
 import hydra
@@ -24,6 +25,7 @@ with install_import_hook(
 )
 def train(cfg: DictConfig):
     print(cfg)
+
     # Set up the dataset, field, optimizer, and loss function.
     # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     device = torch.device(cfg.device)

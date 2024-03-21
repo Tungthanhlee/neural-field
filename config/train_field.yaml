@@ -12,4 +12,5 @@ batch_size: 512
 remap_outputs: true
 device: "cuda:0"
 
+
 output_path: outputs
