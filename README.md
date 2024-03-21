@@ -146,22 +146,5 @@ python -m pytest tests
 
 You can also run the tests from inside VS Code's graphical interface. From the command palette (<key>⌘ command</key> <key>⇧ shift</key> <key>P</key>), run `Testing: Focus on Test Explorer View`.
 
-## Collaboration Policy
 
-You may work with other students and use AI tools (e.g. ChatGPT, GitHub Copilot), but must submit code that you understand fully and have written yourself.
-
-## Submission Policy
-
-Before submitting, ensure that your code has been formatted using Black and linted using Ruff. Otherwise, you will lose points. Submit your work using Canvas.
-
-## Bug Bounty
-
-If you are the first to find and report a bug of any kind in this assignment or README, you will be given extra points. Bugs could include, but are not limited to:
-
-- Code bugs
-- Incorrect instructions
-- Grammatical errors
-- Broken links
-- Outdated or broken dependencies
-
-To report a bug, post to the bug bounty thread on Piazza. Make sure your name is visible to the instructors if you want to receive credit for your discovery. Rewards for individual bugs will be proportional to their severity, and total rewards per student can be up to 3% of this assignment's total point value
+## Credit to 6.S980 class

@@ -25,7 +25,7 @@ class FieldGrid(Field):
         super().__init__(cfg, d_coordinate, d_out)
         assert d_coordinate in (2, 3)
         
-        # raise NotImplementedError("This is your homework.")
+
         C = d_out #predefined channel
         if d_coordinate == 2:
             self.grid_field = nn.Parameter(
@@ -50,7 +50,7 @@ class FieldGrid(Field):
         """
         num_coords, d_coords = coordinates.shape
         normalized_coord = coordinates * 2 - 1 # map to [-1,1], see https://pytorch.org/docs/stable/generated/torch.nn.functional.grid_sample.html
-        # raise NotImplementedError("This is your homework.")
+
         if self.d_coordinate == 2:
             grid = normalized_coord.view(1, num_coords, 1, d_coords) # 1, N, 1, D
             output = F.grid_sample(
