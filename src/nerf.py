@@ -2,6 +2,7 @@ from jaxtyping import Float
 from omegaconf import DictConfig
 from torch import Tensor, nn
 import torch
+from einops import rearrange, reduce, repeat
 
 from .field.field import Field
 
@@ -37,23 +38,30 @@ class NeRF(nn.Module):
         xyz_sample_locations, sample_boundaries = self.generate_samples(
             origins, directions, near, far, self.cfg.num_samples
         )
+        B, S, d_coord = xyz_sample_locations.shape
         
         # evaluate neural field
-        out_field = self.field(xyz_sample_locations) # [batch, sample, 4]
+        xyz_locs = rearrange(
+            xyz_sample_locations,
+            "batch sample d_coord -> (batch sample) d_coord",
+        )
+        out_field = self.field(xyz_locs) # [batch*sample, 4]
         
         # map to valid output ranges
-        out_field[..., :3] = torch.sigmoid(out_field[..., :3]) # [batch, sample, 3]
+        out_field[..., :3] = torch.sigmoid(out_field[..., :3]) # [batch*sample, 3]
         
         # compute alpha values
+        sigma = out_field[..., -1].view(B, S) # [batch, sample]
         alphas = self.compute_alpha_values(
-            out_field[..., -1],
+            sigma,
             sample_boundaries,
         )
         
         # composite these alpha values together with the evaluated colors
+        colors = out_field[..., :3].view(B, S, 3) # [batch, sample, 3]
         c = self.alpha_composite(
             alphas,
-            out_field[..., :3],
+            colors,
         )
         
         return c
@@ -76,13 +84,13 @@ class NeRF(nn.Module):
         """
 
         #compute steps between near and far
-        sample_boundaries = torch.linspace(near, far, num_samples+1, device=origins.device) # [sample+1]
+        steps = torch.linspace(near, far, num_samples+1, device=origins.device) # [sample+1]
+        sample_boundaries = steps.repeat(origins.shape[0], 1) # [batch, sample+1]
         
         #map steps to sample locations
-        mid_points_sample = (sample_boundaries[:-1] + sample_boundaries[1:]) / 2 # [sample]
-        xyz_sample_locations = origins[:, None] + directions[:, None] * mid_points_sample[..., None] # [batch, sample, 3]
-        
-        return xyz_sample_locations, sample_boundaries
+        mid_points = (sample_boundaries[:, 1:] + sample_boundaries[:, :-1]) / 2 # [batch, sample]
+        xyz_sample_locations = origins[:, None, :] + mid_points[..., None] * directions[:, None, :] # [batch, sample, 3]
+        return (xyz_sample_locations, sample_boundaries)
 
     def compute_alpha_values(
         self,

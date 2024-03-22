@@ -1,3 +1,4 @@
+CUDA_VISIBLE_DEVICES=0 python3 -m scripts.train_nerf
 # CUDA_VISIBLE_DEVICES=0 python3 -m scripts.compare_fields
 
 # CUDA_VISIBLE_DEVICES=0 python3 -m scripts.train_field field=ground_plan \

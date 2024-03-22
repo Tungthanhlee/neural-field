@@ -1,6 +1,6 @@
 name: nerf
 
-path: data/nerf_synthetic
+path: /extra/xielab0/tung/data/nerf/nerf_synthetic
 scene: lego
 repetitions_per_epoch: 96
 scale_factor: 0.15
